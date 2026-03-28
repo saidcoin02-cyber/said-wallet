@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Said Wallet</title>
+  <script src="https://cdn.jsdelivr.net/npm/ethers@6.6.2/dist/ethers.min.js"></script>
+</head>
+<body style="font-family:sans-serif;text-align:center">
+
+  <h1>💼 Said Wallet</h1>
+
+  <button onclick="createWallet()">ساخت والت</button>
+
+  <p id="address"></p>
+  <p id="privateKey"></p>
+
+<script>
+function createWallet() {
+  const wallet = ethers.Wallet.createRandom();
+
+  document.getElementById("address").innerText =
+    "Address: " + wallet.address;
+
+  document.getElementById("privateKey").innerText =
+    "PrivateKey: " + wallet.privateKey;
+}
+</script>
+
+</body>
+</html>
