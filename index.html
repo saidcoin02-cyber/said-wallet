@@ -2,7 +2,7 @@
 <html lang="fa">
 <head>
   <meta charset="UTF-8">
-  <title>Said Wallet</title>
+  <title>Said Wallet - حرفه‌ای</title>
   <script src="https://cdn.jsdelivr.net/npm/ethers@6.6.2/dist/ethers.min.js"></script>
 
   <style>
@@ -11,24 +11,24 @@
       color: white;
       font-family: sans-serif;
       text-align: center;
-      padding: 20px;
+      padding: 30px;
     }
 
     .card {
       background: #2f2f4f;
-      padding: 20px;
-      border-radius: 15px;
-      max-width: 400px;
+      padding: 25px;
+      border-radius: 20px;
+      max-width: 450px;
       margin: auto;
-      box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+      box-shadow: 0 12px 30px rgba(0,0,0,0.5);
     }
 
     button {
       background: #6c5ce7;
       border: none;
-      padding: 12px 20px;
+      padding: 12px 25px;
       color: white;
-      border-radius: 10px;
+      border-radius: 12px;
       margin: 10px;
       cursor: pointer;
       font-size: 16px;
@@ -43,12 +43,25 @@
       word-break: break-all;
       font-size: 14px;
     }
+
+    .copy-btn {
+      background: #00b894;
+      margin-top: 5px;
+    }
+
+    .copy-btn:hover {
+      background: #019875;
+    }
+
+    .title {
+      margin-bottom: 20px;
+    }
   </style>
 </head>
 
 <body>
 
-  <h1>💼 Said Wallet</h1>
+  <h1 class="title">💼 Said Wallet - حرفه‌ای</h1>
 
   <div class="card">
     <h3>Wallet Dashboard</h3>
@@ -56,18 +69,25 @@
     <button onclick="createWallet()">ساخت والت</button>
 
     <div class="info" id="address"></div>
-    <div class="info" id="privateKey"></div>
+    <button class="copy-btn" onclick="copyAddress()">📋 کپی آدرس</button>
   </div>
 
   <script>
+    let currentWallet = null;
+
     function createWallet() {
       const wallet = ethers.Wallet.createRandom();
+      currentWallet = wallet;
 
+      // فقط آدرس نمایش داده شود
       document.getElementById("address").innerText =
         "📍 Address: " + wallet.address;
+    }
 
-      document.getElementById("privateKey").innerText =
-        "🔐 Private Key: " + wallet.privateKey;
+    function copyAddress() {
+      if (!currentWallet) return alert("ابتدا والت بسازید!");
+      navigator.clipboard.writeText(currentWallet.address);
+      alert("آدرس کپی شد ✅");
     }
   </script>
 
