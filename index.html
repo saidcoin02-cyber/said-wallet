@@ -2,7 +2,7 @@
 <html lang="fa">
 <head>
   <meta charset="UTF-8">
-  <title>Said Wallet - حرفه‌ای</title>
+  <title>Said Wallet - پیشرفته</title>
   <script src="https://cdn.jsdelivr.net/npm/ethers@6.6.2/dist/ethers.min.js"></script>
 
   <style>
@@ -18,24 +18,31 @@
       background: #2f2f4f;
       padding: 25px;
       border-radius: 20px;
-      max-width: 450px;
+      max-width: 500px;
       margin: auto;
       box-shadow: 0 12px 30px rgba(0,0,0,0.5);
     }
 
+    button, select, input {
+      padding: 10px 20px;
+      margin: 8px;
+      border-radius: 10px;
+      border: none;
+      font-size: 14px;
+    }
+
     button {
       background: #6c5ce7;
-      border: none;
-      padding: 12px 25px;
       color: white;
-      border-radius: 12px;
-      margin: 10px;
       cursor: pointer;
-      font-size: 16px;
     }
 
     button:hover {
       background: #4834d4;
+    }
+
+    input {
+      width: 70%;
     }
 
     .info {
@@ -43,53 +50,94 @@
       word-break: break-all;
       font-size: 14px;
     }
-
-    .copy-btn {
-      background: #00b894;
-      margin-top: 5px;
-    }
-
-    .copy-btn:hover {
-      background: #019875;
-    }
-
-    .title {
-      margin-bottom: 20px;
-    }
   </style>
 </head>
 
 <body>
 
-  <h1 class="title">💼 Said Wallet - حرفه‌ای</h1>
+<h1>💼 Said Wallet - پیشرفته</h1>
 
-  <div class="card">
-    <h3>Wallet Dashboard</h3>
+<div class="card">
 
-    <button onclick="createWallet()">ساخت والت</button>
+  <h3>Wallet Dashboard</h3>
 
-    <div class="info" id="address"></div>
-    <button class="copy-btn" onclick="copyAddress()">📋 کپی آدرس</button>
-  </div>
+  <!-- انتخاب شبکه -->
+  <select id="network">
+    <option value="1">Ethereum</option>
+    <option value="56">BSC</option>
+    <option value="137">Polygon</option>
+  </select>
 
-  <script>
-    let currentWallet = null;
+  <!-- ساخت والت -->
+  <button onclick="createWallet()">ساخت والت</button>
+  <div class="info" id="address"></div>
+  <div class="info" id="balance"></div>
 
-    function createWallet() {
-      const wallet = ethers.Wallet.createRandom();
-      currentWallet = wallet;
+  <!-- ارسال -->
+  <h4>ارسال کوین</h4>
+  <input type="text" id="toAddress" placeholder="آدرس مقصد">
+  <input type="text" id="amount" placeholder="مقدار (ETH/BNB/MATIC)">
+  <button onclick="sendCoin()">ارسال</button>
+  <div class="info" id="txStatus"></div>
+</div>
 
-      // فقط آدرس نمایش داده شود
-      document.getElementById("address").innerText =
-        "📍 Address: " + wallet.address;
+<script>
+  // RPCها برای شبکه‌ها
+  const RPCS = {
+    1: ["https://eth.llamarpc.com","https://rpc.ankr.com/eth"],
+    56: ["https://bsc-dataseed.binance.org","https://rpc.ankr.com/bsc"],
+    137: ["https://polygon-rpc.com","https://rpc.ankr.com/polygon"]
+  };
+
+  let wallet = null;
+
+  // گرفتن یک RPC سالم
+  async function getProvider(chainId) {
+    const rpcs = RPCS[chainId];
+    for (let rpc of rpcs) {
+      try {
+        const provider = new ethers.JsonRpcProvider(rpc);
+        await provider.getBlockNumber();
+        return provider;
+      } catch(e) {}
     }
+    throw new Error("No working RPC found");
+  }
 
-    function copyAddress() {
-      if (!currentWallet) return alert("ابتدا والت بسازید!");
-      navigator.clipboard.writeText(currentWallet.address);
-      alert("آدرس کپی شد ✅");
+  // ساخت والت
+  async function createWallet() {
+    wallet = ethers.Wallet.createRandom();
+    document.getElementById("address").innerText = "📍 Address: " + wallet.address;
+
+    // گرفتن موجودی اولیه
+    const chainId = document.getElementById("network").value;
+    const provider = await getProvider(chainId);
+    const bal = await provider.getBalance(wallet.address);
+    document.getElementById("balance").innerText = "💰 Balance: " + ethers.formatEther(bal);
+    document.getElementById("txStatus").innerText = "";
+  }
+
+  // ارسال کوین
+  async function sendCoin() {
+    if (!wallet) return alert("ابتدا والت بسازید!");
+    const chainId = document.getElementById("network").value;
+    const provider = await getProvider(chainId);
+    const w = wallet.connect(provider);
+
+    const to = document.getElementById("toAddress").value;
+    const amount = document.getElementById("amount").value;
+
+    try {
+      const tx = await w.sendTransaction({
+        to,
+        value: ethers.parseEther(amount)
+      });
+      document.getElementById("txStatus").innerText = "✅ Transaction Hash: " + tx.hash;
+    } catch (e) {
+      document.getElementById("txStatus").innerText = "❌ Error: " + e.message;
     }
-  </script>
+  }
+</script>
 
 </body>
 </html>
