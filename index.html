@@ -1,29 +1,75 @@
 <!DOCTYPE html>
-<html>
+<html lang="fa">
 <head>
+  <meta charset="UTF-8">
   <title>Said Wallet</title>
   <script src="https://cdn.jsdelivr.net/npm/ethers@6.6.2/dist/ethers.min.js"></script>
+
+  <style>
+    body {
+      background: linear-gradient(135deg, #1e1e2f, #2c2c54);
+      color: white;
+      font-family: sans-serif;
+      text-align: center;
+      padding: 20px;
+    }
+
+    .card {
+      background: #2f2f4f;
+      padding: 20px;
+      border-radius: 15px;
+      max-width: 400px;
+      margin: auto;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+    }
+
+    button {
+      background: #6c5ce7;
+      border: none;
+      padding: 12px 20px;
+      color: white;
+      border-radius: 10px;
+      margin: 10px;
+      cursor: pointer;
+      font-size: 16px;
+    }
+
+    button:hover {
+      background: #4834d4;
+    }
+
+    .info {
+      margin-top: 15px;
+      word-break: break-all;
+      font-size: 14px;
+    }
+  </style>
 </head>
-<body style="font-family:sans-serif;text-align:center">
+
+<body>
 
   <h1>💼 Said Wallet</h1>
 
-  <button onclick="createWallet()">ساخت والت</button>
+  <div class="card">
+    <h3>Wallet Dashboard</h3>
 
-  <p id="address"></p>
-  <p id="privateKey"></p>
+    <button onclick="createWallet()">ساخت والت</button>
 
-<script>
-function createWallet() {
-  const wallet = ethers.Wallet.createRandom();
+    <div class="info" id="address"></div>
+    <div class="info" id="privateKey"></div>
+  </div>
 
-  document.getElementById("address").innerText =
-    "Address: " + wallet.address;
+  <script>
+    function createWallet() {
+      const wallet = ethers.Wallet.createRandom();
 
-  document.getElementById("privateKey").innerText =
-    "PrivateKey: " + wallet.privateKey;
-}
-</script>
+      document.getElementById("address").innerText =
+        "📍 Address: " + wallet.address;
+
+      document.getElementById("privateKey").innerText =
+        "🔐 Private Key: " + wallet.privateKey;
+    }
+  </script>
 
 </body>
 </html>
